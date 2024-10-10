@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -47,7 +46,7 @@ impl<T> LinkedList<T> {
     pub fn add(&mut self, obj: T) {
         let mut node = Box::new(Node::new(obj));
         node.next = None;
-        let node_ptr = Some(unsafe { NonNull::new_unchecked(Box::into_raw(node)) });
+        let node_ptr = Some(unsafe { NonNull::new_unchecked(Box::into_raw(node)) });//into_raw转换成指针
         match self.end {
             None => self.start = node_ptr,
             Some(end_ptr) => unsafe { (*end_ptr.as_ptr()).next = node_ptr },
@@ -56,11 +55,11 @@ impl<T> LinkedList<T> {
         self.length += 1;
     }
 
-    pub fn get(&mut self, index: i32) -> Option<&T> {
+    pub fn get(&self, index: i32) -> Option<&T> {
         self.get_ith_node(self.start, index)
     }
 
-    fn get_ith_node(&mut self, node: Option<NonNull<Node<T>>>, index: i32) -> Option<&T> {
+    fn get_ith_node(&self, node: Option<NonNull<Node<T>>>, index: i32) -> Option<&T> {
         match node {
             None => None,
             Some(next_ptr) => match index {
@@ -69,14 +68,39 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+}
+impl LinkedList<i32> {
+	pub fn merge(list_a:LinkedList<i32>,list_b:LinkedList<i32>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
-        }
+        let mut output = LinkedList::new();
+        let mut index_a:i32 = 0;
+        let mut index_b:i32 = 0;
+
+        while list_a.get(index_a) != None || list_b.get(index_b) != None{
+            let index_a_num = list_a.get(index_a);
+            let index_b_num = list_b.get(index_b);
+            if index_a_num == None{
+                output.add(*index_b_num.unwrap());
+                index_b += 1;
+                continue;
+            }
+            if index_b_num == None{
+                output.add(*index_a_num.unwrap());
+                index_a += 1;
+                continue;
+            }
+            let index_a_num = *index_a_num.unwrap();
+            let index_b_num = *index_b_num.unwrap();
+            if  index_a_num > index_b_num{
+                output.add(index_b_num);
+                index_b += 1;
+            } else {
+                output.add(index_a_num);
+                index_a += 1;
+            }
+
+        }        
+        output
 	}
 }
 
