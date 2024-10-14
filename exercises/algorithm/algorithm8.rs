@@ -2,7 +2,6 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -56,26 +55,65 @@ pub struct myStack<T>
 {
 	//TODO
 	q1:Queue<T>,
-	q2:Queue<T>
+	q2:Queue<T>,
+    stack_first:bool
 }
 impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
 			//TODO
 			q1:Queue::<T>::new(),
-			q2:Queue::<T>::new()
+			q2:Queue::<T>::new(),
+            stack_first:true
         }
     }
     pub fn push(&mut self, elem: T) {
         //TODO
+        if self.stack_first == true{
+            while let Ok(v) = self.q1.dequeue(){
+                self.q2.enqueue(v);
+            }
+            self.q1.enqueue(elem);
+            self.stack_first = false;
+        }else {
+            while let Ok(v) = self.q2.dequeue(){
+                self.q1.enqueue(v);
+            }
+            self.q2.enqueue(elem);
+            self.stack_first = true;
+        }
     }
     pub fn pop(&mut self) -> Result<T, &str> {
         //TODO
-		Err("Stack is empty")
+        if self.stack_first == false{
+            if let Ok(v) = self.q1.dequeue(){
+                return Ok(v)
+            }else{
+                if let Ok(z) = self.q2.dequeue(){
+                    return Ok(z)
+                }else{
+                    return Err("Stack is empty")
+                }
+            }
+        }else{
+            if let Ok(v) = self.q2.dequeue(){
+                return Ok(v)
+            }else{
+                if let Ok(z) = self.q1.dequeue(){
+                    return Ok(z)
+                }else{
+                    return Err("Stack is empty")
+                }
+            }
+        }
     }
     pub fn is_empty(&self) -> bool {
 		//TODO
-        true
+        if self.q1.is_empty() && self.q2.is_empty(){
+            true
+        }else{
+            false
+        }
     }
 }
 
